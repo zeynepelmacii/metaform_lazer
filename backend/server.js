@@ -2,6 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 require('dotenv').config();
 
+const authRouter = require('./Router/authRouter');
+const userRouter = require('./Router/userRouter');
+
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;
 
@@ -15,6 +18,9 @@ const startServer = async () => {
     await mongoose.connect(MONGO_URI);
     console.log('🚀 DB connection is done');
 
+    app.use('/api/auth', authRouter);
+    app.use('/api/user', userRouter);
+
     app.listen(PORT, () => {
         console.log(`🚀 Server has build up on port ${PORT}`);
     });
@@ -25,3 +31,5 @@ const startServer = async () => {
 };
 
 startServer();
+
+
