@@ -1,4 +1,5 @@
 const userModel = require('../Model/User');
+const VerificationCode = require('../Model/VerificationCode');
 const hashPassword = require('../Utils/Auth/HashPassword');
 const validateNewUser = require('../Utils/Auth/ValidateNewUser');
 
@@ -134,20 +135,23 @@ const activateUser =  async (req, res) => {
 
 
 const verifyUser =  async (req, res) => {
-    const userId = req.params.id;   
+    const { userId, code } = req.body;   
     try {
         const user = await userModel.findById(userId);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
 
+        const record = await VerificationCode.findOne({ userId, code });
+        if (!record || record.expiresAt < new Date()) {
+            return res.status(400).json({ message: 'Invalid or expired code' });
+        }
 
-
-        // buraya doğrulama kodu kontrolü eklenebilir
-
-        
         user.isVerified = true;
         await user.save();
+
+        // Kullanılan kodu sil
+        await VerificationCode.deleteMany({ userId });
         res.status(200).json({ message: 'User verified successfully' });
     }catch (err) {
         res.status(500).json({ message: 'Server Error', error: err.message });

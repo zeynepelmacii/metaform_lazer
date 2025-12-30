@@ -1,6 +1,7 @@
 const User = require('../Model/User');
 const validateNewUser = require('../Utils/Auth/ValidateNewUser');
 const comparePassword = require('../Utils/Auth/ComparePassword');
+const verifyUser = require('../Utils/Auth/verifyUser');
 
 const register = async (req, res) => {
   try {
@@ -57,7 +58,14 @@ const login = async (req, res) => {
 
     if (!user.isActive) {
       return res.status(403).json({
-        message: 'Your account is inactive. Please contact support.'
+        message: 'Your account is inactive. Please activate your account.'
+      });
+    }
+
+    if (!user.isVerified) {
+      verifyUser(user);
+      return res.status(403).json({
+        message: 'Please verify your account before logging in.'
       });
     }
 

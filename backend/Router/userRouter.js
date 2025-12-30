@@ -19,6 +19,6 @@ router.put('/updateEmail/:id' , updateEmail);
 router.delete('/deleteUser/:id' ,deleteUser);
 router.put('/inactivateUser/:id' ,inactivateUser);
 router.put('/activateUser/:id' ,activateUser);
-router.put('/verifyUser/:id' ,verifyUser);
+router.put('/verifyUser' ,verifyUser);
 
 module.exports = router;
